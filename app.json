@@ -1,19 +1,12 @@
 {
   "expo": {
-    "name": "ioscalculator",
-    "slug": "ioscalculator",
-    "version": "1.0.0",
+    "name": "Calculator",
+    "slug": "calculator",
+    "version": "1.0.0Beta",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -21,10 +14,14 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.eusebiu.calculator"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5d3319bb-b340-4a7f-b443-06f3cfea42c0"
       }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": ["expo-build-properties"]
   }
 }
