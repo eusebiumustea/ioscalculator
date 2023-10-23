@@ -9,7 +9,7 @@ export default function App() {
   }, []);
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="default" backgroundColor={"#000"} />
       <Calculator />
     </SafeAreaProvider>
   );

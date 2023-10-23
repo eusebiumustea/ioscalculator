@@ -1,23 +1,24 @@
-import { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Dimensions, ScrollView, Text, ToastAndroid, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Text, ToastAndroid, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "../assets/Icon";
-import { ButtonContainer } from "./ios-button-container";
 import { FindDecimalPlacesOfLastNumber } from "../tools/calculator-tools";
 import {
   moderateFontScale,
   moderateScale,
   responsiveWidth,
 } from "../tools/normalizeSize";
+import { ButtonContainer } from "./ios-button-container";
 export default function Calculator(svgProps: any) {
-  const [expression, setExpression] = useState<string>("");
+  const [expression, setExpression] = useState<string>("0");
+  const decimalPlacesOfLastNumber = FindDecimalPlacesOfLastNumber(expression);
   const { bottom } = useSafeAreaInsets();
   const [result, setResult] = useState<string | number>(null);
   const [block, setBlock] = useState(false);
   const operators = ["/", "*", "-", "+"];
   const mathOperators = ["÷", "X", "-", "+"];
-  const last = expression[expression.length - 1];
+  const last = expression[expression?.length - 1];
   const lastIsNumber: boolean =
     last === ")" ? true : Number.isNaN(Number(last)) === false;
   useEffect(() => {
@@ -25,21 +26,24 @@ export default function Calculator(svgProps: any) {
       try {
         const res = await AsyncStorage.getItem(key);
         const data = JSON.parse(res);
-        setExpression(data?.e);
-        setResult(data?.r);
-      } catch (e) {
-        console.log(e);
-        ToastAndroid.show("Cannot load history", 300);
+        if (data) {
+          setExpression(data?.e);
+          setResult(data?.r);
+        }
+      } catch (_) {
+        ToastAndroid.show(`Error while retrieving data`, 200);
+        null;
       }
     }
     GetData("data");
   }, []);
+
   useEffect(() => {
     async function StoreData(value: any) {
       try {
         await AsyncStorage.setItem("data", JSON.stringify(value));
-      } catch (e) {
-        console.error(e);
+      } catch (_) {
+        null;
       }
     }
 
@@ -48,7 +52,6 @@ export default function Calculator(svgProps: any) {
       StoreData({ e: expression, r: result });
     };
   }, [expression, result]);
-
   function RenderNumbers({ from, to }: any) {
     const buttons = [];
     for (let i = from; i < to + 1; i++) {
@@ -58,17 +61,19 @@ export default function Calculator(svgProps: any) {
             if (result) {
               setExpression(result.toString() + i);
               setResult(null);
+            } else if (result === 0) {
+              setExpression(i);
+              setResult(null);
+            } else if (expression === "0") {
+              setExpression("" + i);
             } else if (last === ")") {
               setExpression(
                 (e) =>
-                  e.slice(
-                    0,
-                    e.length - FindDecimalPlacesOfLastNumber(expression) - 1
-                  ) +
+                  e.slice(0, e?.length - decimalPlacesOfLastNumber - 1) +
                   i +
                   ")"
               );
-            } else if (result && result.toString()[0] === "-") {
+            } else if (result?.toString()[0] === "-") {
               setExpression(`(${result + i})`);
               setResult(null);
             } else if (result === Infinity) {
@@ -95,26 +100,27 @@ export default function Calculator(svgProps: any) {
       </View>
     );
   }
+
   function RenderOperators() {
     const displayOperators = [];
-    for (let i = 0; i < operators.length; i++) {
+    for (let i = 0; i < operators?.length; i++) {
       displayOperators.push(
         <ButtonContainer
           onPress={() => {
             if (!lastIsNumber) {
               null;
-            } else if (result) {
-              setExpression(result.toString() + operators[i]);
+            } else if (result && result?.toString()[0] !== "-") {
+              setExpression(result?.toString() + operators[i]);
               setResult(null);
               setBlock(false);
-            } else if (result && result.toString()[0] === "-") {
+            } else if (result && result?.toString()[0] === "-") {
               setExpression(`(${result})` + operators[i]);
               setResult(null);
               setBlock(false);
-            } else if (Number.isFinite(result) === true) {
+            } else if (Number.isFinite(result)) {
               Clear();
             } else if (
-              expression.slice(expression.length - 2, expression.length) ===
+              expression.slice(expression?.length - 2, expression?.length) ===
               ".)"
             ) {
               null;
@@ -133,36 +139,40 @@ export default function Calculator(svgProps: any) {
     return displayOperators;
   }
   function GetExpressionResult() {
-    if (!lastIsNumber) {
-      setResult(eval(expression.slice(0, expression.length - 1)));
+    try {
+      if (lastIsNumber) {
+        setResult(eval(expression));
+      }
+    } catch (_) {
+      ToastAndroid.showWithGravity("Invalid Expresion", 100, ToastAndroid.TOP);
+      Clear();
     }
-    setResult(eval(expression));
   }
   function Clear() {
-    setResult(null), setExpression("");
+    setResult(null), setExpression("0");
     setBlock(false);
   }
   function Negative() {
-    if (result) {
-      setExpression(`${result}`);
+    if (result && result.toString()[0] !== "-") {
+      setExpression(`(-${result})`);
       setResult(null);
     } else if (result && result.toString()[0] === "-") {
-      setExpression(`(${result}.)`);
+      setExpression(`(${result})`);
       setResult(null);
-      setBlock(false);
+    } else if (expression === "0") {
+      null;
+    } else if (result && result.toString().includes("+")) {
+      null;
     } else if (last === ")") {
       null;
     } else if (!lastIsNumber) {
       null;
     } else {
       setExpression(
-        expression.slice(
-          0,
-          expression.length - FindDecimalPlacesOfLastNumber(expression)
-        ) +
+        expression.slice(0, expression?.length - decimalPlacesOfLastNumber) +
           `(-${expression.slice(
-            expression.length - FindDecimalPlacesOfLastNumber(expression),
-            expression.length
+            expression?.length - decimalPlacesOfLastNumber,
+            expression?.length
           )})`
       );
     }
@@ -176,39 +186,48 @@ export default function Calculator(svgProps: any) {
       setBlock(false);
     } else {
       setExpression((e) => e + "%");
-      setBlock(true);
-    }
-  }
-  function AddZero() {
-    if (result) {
-      setExpression(result.toString() + "0");
-      setResult(null);
-    } else {
-      setExpression((e) => e + "0");
+      setBlock(false);
     }
   }
   function Double() {
     if (block) {
       null;
-    } else if (result && Number.isInteger(result) === false) {
+    } else if (result && Number.isInteger(result)) {
       setExpression(`${result}.`);
       setResult(null);
+      setBlock(true);
+    } else if (result === 0) {
+      setExpression(`${result}.`);
+      setResult(null);
+      setBlock(true);
     } else if (!lastIsNumber) {
       null;
     } else if (last === ")") {
-      setExpression((e) => e.slice(0, e.length - 1) + ".)");
+      setExpression((e) => e.slice(0, e?.length - 1) + ".)");
       setBlock(true);
     } else {
       setExpression((e) => e + ".");
       setBlock(true);
     }
   }
+  function AddZero() {
+    if (result === 0) {
+      null;
+    } else if (result) {
+      setExpression(result.toString() + "0");
+      setResult(null);
+    } else if (expression === "0") {
+      null;
+    } else {
+      setExpression((e) => e + "0");
+    }
+  }
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: "black",
-        marginBottom: bottom,
       }}
     >
       <View
@@ -218,30 +237,32 @@ export default function Calculator(svgProps: any) {
           height: "40%",
           top: 0,
           alignItems: "flex-end",
-
           justifyContent: "flex-end",
         }}
       >
         <Text
           style={{
             fontSize:
-              result !== null ? moderateFontScale(20) : moderateFontScale(50),
+              result !== undefined && result !== null
+                ? moderateFontScale(20)
+                : moderateFontScale(50),
             color: "white",
-            fontWeight: expression === "" ? "normal" : "bold",
+            fontWeight: expression === "0" ? "normal" : "bold",
             paddingRight: moderateScale(30),
           }}
         >
-          {expression === "" ? 0 : expression}
+          {expression}
         </Text>
-        {result !== null && (
+        {result !== undefined && result !== null && (
           <Text
             style={{
-              fontSize: moderateFontScale(60),
+              fontSize: moderateFontScale(50),
               color: "white",
               paddingRight: moderateScale(30),
+              fontWeight: "bold",
             }}
           >
-            {result}
+            {result.toString()}
           </Text>
         )}
       </View>
@@ -251,7 +272,7 @@ export default function Calculator(svgProps: any) {
           width: "100%",
           height: "60%",
           position: "absolute",
-          bottom: 0,
+          bottom: bottom,
           flexDirection: "row",
           alignItems: "center",
           gap: 10,
