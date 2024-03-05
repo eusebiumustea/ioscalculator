@@ -22,7 +22,7 @@ export function Equal({ onPress, svgProps }: ButtonBaseProps) {
         xmlns="http://www.w3.org/2000/svg"
         {...svgProps}
       >
-        <Rect width={88} height={88} rx={44} fill="#F1A33B" />
+        <Rect width={88} height={88} rx={44} fill="#FE9E0B" />
         <Path
           d="M32.898 51.977h23.204V48.18H32.898v3.797zm0-11.602h23.204v-3.797H32.898v3.797z"
           fill="#fff"

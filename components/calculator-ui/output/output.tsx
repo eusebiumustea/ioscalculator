@@ -1,13 +1,15 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { OutputProps } from "./types";
 import { moderateFontScale } from "../../../tools/normalizeSize";
 
 export function Output({ result, expression }: OutputProps) {
   return (
-    <View
-      style={{
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{
         justifyContent: "flex-end",
         alignItems: "flex-end",
+        flex: 1,
       }}
     >
       <Text
@@ -23,13 +25,13 @@ export function Output({ result, expression }: OutputProps) {
         <Text
           style={{
             color: "#ffffff",
-            fontSize: moderateFontScale(90),
+            fontSize: moderateFontScale(60),
             margin: 12,
           }}
         >
           {result}
         </Text>
       )}
-    </View>
+    </ScrollView>
   );
 }

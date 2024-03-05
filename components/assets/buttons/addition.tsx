@@ -22,7 +22,7 @@ export function Addition({ onPress, svgProps }: ButtonBaseProps) {
         xmlns="http://www.w3.org/2000/svg"
         {...svgProps}
       >
-        <Rect width={88} height={88} rx={44} fill="#F1A33B" />
+        <Rect width={88} height={88} rx={44} fill="#FE9E0B" />
         <Mask
           id="a"
           maskUnits="userSpaceOnUse"

@@ -1,7 +1,7 @@
-import Svg, { Path, Rect } from "react-native-svg";
-import { ButtonBaseProps } from "./types";
 import { TouchableOpacity } from "react-native";
+import Svg, { Path, Rect } from "react-native-svg";
 import { ButtonSize } from "../../../config/ui-config";
+import { ButtonBaseProps } from "./types";
 
 export function Clear({ onPress, svgProps }: ButtonBaseProps) {
   return (

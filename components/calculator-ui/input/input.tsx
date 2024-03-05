@@ -36,7 +36,7 @@ export function Input({ onValuePressed, onActionPressed }: InputProps) {
       <Row>
         <Clear onPress={() => onActionPressed("clear")} />
         <Negative onPress={() => onActionPressed("toggle-negative")} />
-        <DecimalAdd onPress={() => onActionPressed("decimal-add")} />
+        <DecimalAdd onPress={() => onValuePressed("%")} />
         <Divider onPress={() => onValuePressed("/")} />
       </Row>
       <Row>
