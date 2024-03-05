@@ -35,7 +35,7 @@ export default {
             enableProguardInReleaseBuilds: true,
           },
           ios: {
-            deploymentTarget: "13.0",
+            deploymentTarget: "13.4",
           },
         },
       ],
