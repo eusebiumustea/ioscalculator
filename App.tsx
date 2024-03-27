@@ -7,7 +7,7 @@ export default function App() {
   useEffect(() => {
     async function setDarkNavBar() {
       if (Platform.OS === "android") {
-        NavigationBar.setBackgroundColorAsync("black");
+        await NavigationBar.setBackgroundColorAsync("black");
       }
     }
     setDarkNavBar();

@@ -16,7 +16,7 @@ export function Output({ result, expression }: OutputProps) {
         style={{
           color: "#fff",
           fontSize: result ? moderateFontScale(26) : moderateFontScale(60),
-          margin: 12,
+          marginHorizontal: 12,
         }}
       >
         {!expression ? "0" : expression}
@@ -26,7 +26,7 @@ export function Output({ result, expression }: OutputProps) {
           style={{
             color: "#ffffff",
             fontSize: moderateFontScale(60),
-            margin: 12,
+            marginHorizontal: 12,
           }}
         >
           {result}

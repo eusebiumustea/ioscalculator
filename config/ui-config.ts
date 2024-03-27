@@ -1,8 +1,10 @@
+import { moderateScale, responsiveHeight } from "../tools/normalizeSize";
+
 export const ButtonSize = {
-  width: 75,
-  height: 75,
+  width: moderateScale(75),
+  height: responsiveHeight(75),
 };
 export const LongButtonSize = {
-  width: 167,
-  height: 75,
+  width: moderateScale(167),
+  height: responsiveHeight(75),
 };
